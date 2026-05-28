@@ -29,6 +29,21 @@ export interface MonthlyPoint {
   media: number;
 }
 
+/** Fator que contribuiu para o score de risco, com peso explicável. */
+export interface RiskFactor {
+  rotulo: string;
+  /** Pontos somados ao score de risco (0–100). */
+  peso: number;
+}
+
+/** Resultado da avaliação de risco "pela IA": score, nível e fatores. */
+export interface RiskAssessment {
+  /** Score de risco de evasão (0–100; quanto maior, pior). */
+  score: number;
+  nivel: RiskLevel;
+  fatores: RiskFactor[];
+}
+
 export type EventKind = "falta" | "alerta" | "intervencao" | "registro";
 
 /** Evento na linha do tempo de acompanhamento do aluno. */

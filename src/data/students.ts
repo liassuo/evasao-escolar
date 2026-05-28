@@ -5,6 +5,7 @@ import type {
   MonthlyPoint,
   TimelineEvent,
 } from "@/types";
+import { riskLevelOf } from "@/lib/ai";
 
 export const COURSES: Course[] = [
   "Engenharia de Software",
@@ -16,28 +17,41 @@ export const COURSES: Course[] = [
 
 export const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
 
-export const students: Student[] = [
-  { id: 1, nome: "João Silva", curso: "Engenharia de Software", frequencia: 68, media: 6.1, participacao: "Baixa", semestre: 4, risco: "medio" },
-  { id: 2, nome: "Maria Oliveira", curso: "Administração", frequencia: 92, media: 8.7, participacao: "Alta", semestre: 3, risco: "baixo" },
-  { id: 3, nome: "Pedro Santos", curso: "Direito", frequencia: 54, media: 4.8, participacao: "Baixa", semestre: 5, risco: "alto" },
-  { id: 4, nome: "Ana Costa", curso: "Psicologia", frequencia: 88, media: 7.9, participacao: "Alta", semestre: 2, risco: "baixo" },
-  { id: 5, nome: "Lucas Pereira", curso: "Sistemas de Informação", frequencia: 47, media: 4.2, participacao: "Baixa", semestre: 6, risco: "alto" },
-  { id: 6, nome: "Beatriz Lima", curso: "Engenharia de Software", frequencia: 76, media: 6.8, participacao: "Média", semestre: 3, risco: "medio" },
-  { id: 7, nome: "Gabriel Souza", curso: "Administração", frequencia: 95, media: 9.1, participacao: "Alta", semestre: 4, risco: "baixo" },
-  { id: 8, nome: "Larissa Fernandes", curso: "Direito", frequencia: 61, media: 5.6, participacao: "Média", semestre: 7, risco: "medio" },
-  { id: 9, nome: "Rafael Almeida", curso: "Psicologia", frequencia: 43, media: 3.9, participacao: "Baixa", semestre: 5, risco: "alto" },
-  { id: 10, nome: "Juliana Ribeiro", curso: "Sistemas de Informação", frequencia: 84, media: 7.4, participacao: "Alta", semestre: 2, risco: "baixo" },
-  { id: 11, nome: "Matheus Carvalho", curso: "Engenharia de Software", frequencia: 58, media: 5.1, participacao: "Baixa", semestre: 6, risco: "alto" },
-  { id: 12, nome: "Camila Rodrigues", curso: "Administração", frequencia: 79, media: 7.0, participacao: "Média", semestre: 3, risco: "medio" },
-  { id: 13, nome: "Felipe Martins", curso: "Direito", frequencia: 91, media: 8.3, participacao: "Alta", semestre: 4, risco: "baixo" },
-  { id: 14, nome: "Isabela Gomes", curso: "Psicologia", frequencia: 66, media: 6.0, participacao: "Média", semestre: 5, risco: "medio" },
-  { id: 15, nome: "Bruno Araújo", curso: "Sistemas de Informação", frequencia: 51, media: 4.5, participacao: "Baixa", semestre: 7, risco: "alto" },
-  { id: 16, nome: "Letícia Barbosa", curso: "Engenharia de Software", frequencia: 89, media: 8.0, participacao: "Alta", semestre: 2, risco: "baixo" },
-  { id: 17, nome: "Thiago Nunes", curso: "Administração", frequencia: 64, media: 5.8, participacao: "Baixa", semestre: 6, risco: "medio" },
-  { id: 18, nome: "Mariana Dias", curso: "Direito", frequencia: 49, media: 4.0, participacao: "Baixa", semestre: 8, risco: "alto" },
-  { id: 19, nome: "Vinícius Moreira", curso: "Psicologia", frequencia: 82, media: 7.6, participacao: "Alta", semestre: 3, risco: "baixo" },
-  { id: 20, nome: "Sophia Cardoso", curso: "Sistemas de Informação", frequencia: 73, media: 6.5, participacao: "Média", semestre: 4, risco: "medio" },
+/**
+ * Cadastro de alunos com os indicadores acadêmicos brutos.
+ * O nível de `risco` NÃO é fixo: é derivado desses indicadores pelo motor de
+ * risco da IA (ver `assessRisk` em lib/ai.ts) ao montar o array `students`.
+ */
+type StudentRaw = Omit<Student, "risco">;
+
+const studentsRaw: StudentRaw[] = [
+  { id: 1, nome: "João Silva", curso: "Engenharia de Software", frequencia: 68, media: 6.1, participacao: "Baixa", semestre: 4 },
+  { id: 2, nome: "Maria Oliveira", curso: "Administração", frequencia: 92, media: 8.7, participacao: "Alta", semestre: 3 },
+  { id: 3, nome: "Pedro Santos", curso: "Direito", frequencia: 54, media: 4.8, participacao: "Baixa", semestre: 5 },
+  { id: 4, nome: "Ana Costa", curso: "Psicologia", frequencia: 88, media: 7.9, participacao: "Alta", semestre: 2 },
+  { id: 5, nome: "Lucas Pereira", curso: "Sistemas de Informação", frequencia: 47, media: 4.2, participacao: "Baixa", semestre: 6 },
+  { id: 6, nome: "Beatriz Lima", curso: "Engenharia de Software", frequencia: 76, media: 6.8, participacao: "Média", semestre: 3 },
+  { id: 7, nome: "Gabriel Souza", curso: "Administração", frequencia: 95, media: 9.1, participacao: "Alta", semestre: 4 },
+  { id: 8, nome: "Larissa Fernandes", curso: "Direito", frequencia: 61, media: 5.6, participacao: "Média", semestre: 7 },
+  { id: 9, nome: "Rafael Almeida", curso: "Psicologia", frequencia: 43, media: 3.9, participacao: "Baixa", semestre: 5 },
+  { id: 10, nome: "Juliana Ribeiro", curso: "Sistemas de Informação", frequencia: 84, media: 7.4, participacao: "Alta", semestre: 2 },
+  { id: 11, nome: "Matheus Carvalho", curso: "Engenharia de Software", frequencia: 58, media: 5.1, participacao: "Baixa", semestre: 6 },
+  { id: 12, nome: "Camila Rodrigues", curso: "Administração", frequencia: 79, media: 7.0, participacao: "Média", semestre: 3 },
+  { id: 13, nome: "Felipe Martins", curso: "Direito", frequencia: 91, media: 8.3, participacao: "Alta", semestre: 4 },
+  { id: 14, nome: "Isabela Gomes", curso: "Psicologia", frequencia: 66, media: 6.0, participacao: "Média", semestre: 5 },
+  { id: 15, nome: "Bruno Araújo", curso: "Sistemas de Informação", frequencia: 51, media: 4.5, participacao: "Baixa", semestre: 7 },
+  { id: 16, nome: "Letícia Barbosa", curso: "Engenharia de Software", frequencia: 89, media: 8.0, participacao: "Alta", semestre: 2 },
+  { id: 17, nome: "Thiago Nunes", curso: "Administração", frequencia: 64, media: 5.8, participacao: "Baixa", semestre: 6 },
+  { id: 18, nome: "Mariana Dias", curso: "Direito", frequencia: 49, media: 4.0, participacao: "Baixa", semestre: 8 },
+  { id: 19, nome: "Vinícius Moreira", curso: "Psicologia", frequencia: 82, media: 7.6, participacao: "Alta", semestre: 3 },
+  { id: 20, nome: "Sophia Cardoso", curso: "Sistemas de Informação", frequencia: 73, media: 6.5, participacao: "Média", semestre: 4 },
 ];
+
+/** Alunos com o nível de risco derivado dos indicadores pela IA. */
+export const students: Student[] = studentsRaw.map((s) => ({
+  ...s,
+  risco: riskLevelOf(s),
+}));
 
 /* ----------------------- Derived / aggregated data ----------------------- */
 

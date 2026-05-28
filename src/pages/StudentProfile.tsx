@@ -24,6 +24,7 @@ import {
   ListChecks,
 } from "lucide-react";
 import { RiskBadge } from "@/components/RiskBadge";
+import { RiskScore } from "@/components/RiskScore";
 import { Timeline } from "@/components/Timeline";
 import {
   Card,
@@ -34,7 +35,11 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { students, studentHistory, studentTimeline } from "@/data/students";
-import { generateAIAnalysis, generateRecommendations } from "@/lib/ai";
+import {
+  generateAIAnalysis,
+  generateRecommendations,
+  assessRisk,
+} from "@/lib/ai";
 
 export function StudentProfile() {
   const { id } = useParams();
@@ -63,6 +68,7 @@ export function StudentProfile() {
   const recommendations = generateRecommendations(student);
   const history = studentHistory(student);
   const timeline = studentTimeline(student);
+  const risk = assessRisk(student);
   const participacaoScore =
     student.participacao === "Alta" ? 85 : student.participacao === "Média" ? 55 : 28;
 
@@ -201,10 +207,49 @@ export function StudentProfile() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* Score de risco em destaque */}
+              <div className="mb-4 flex items-center justify-between rounded-md border border-border bg-muted/50 px-4 py-3">
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground">
+                    Score de risco de evasão
+                  </p>
+                  <p className="tabular font-display text-2xl font-bold leading-tight">
+                    {risk.score}
+                    <span className="text-base font-medium text-muted-foreground">
+                      /100
+                    </span>
+                  </p>
+                </div>
+                <RiskScore score={risk.score} nivel={risk.nivel} showValue={false} />
+              </div>
+
               <p className="text-sm leading-relaxed text-foreground/90">
                 {analysis}
               </p>
-              <p className="mt-3 text-[11px] italic text-muted-foreground">
+
+              {/* Fatores que pesaram no score (parte explicável) */}
+              {risk.fatores.length > 0 && (
+                <div className="mt-4">
+                  <p className="mb-2 text-xs font-semibold text-muted-foreground">
+                    Fatores considerados pela IA
+                  </p>
+                  <ul className="space-y-1.5">
+                    {risk.fatores.map((f) => (
+                      <li
+                        key={f.rotulo}
+                        className="flex items-center justify-between gap-3 text-sm"
+                      >
+                        <span className="text-foreground/90">{f.rotulo}</span>
+                        <span className="tabular shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+                          +{f.peso}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <p className="mt-4 text-[11px] italic text-muted-foreground">
                 * Conteúdo gerado por simulação de IA para fins de demonstração
                 acadêmica.
               </p>

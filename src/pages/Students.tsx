@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, ChevronRight } from "lucide-react";
 import { RiskBadge } from "@/components/RiskBadge";
+import { RiskScore } from "@/components/RiskScore";
+import { assessRisk } from "@/lib/ai";
 import {
   Card,
   CardContent,
@@ -102,6 +104,7 @@ export function Students() {
                 <TableHead>Semestre</TableHead>
                 <TableHead>Frequência</TableHead>
                 <TableHead>Média</TableHead>
+                <TableHead>Score IA</TableHead>
                 <TableHead>Risco</TableHead>
                 <TableHead className="pr-6" />
               </TableRow>
@@ -131,6 +134,12 @@ export function Students() {
                   </TableCell>
                   <TableCell>{s.media.toFixed(1)}</TableCell>
                   <TableCell>
+                    {(() => {
+                      const a = assessRisk(s);
+                      return <RiskScore score={a.score} nivel={a.nivel} />;
+                    })()}
+                  </TableCell>
+                  <TableCell>
                     <RiskBadge risco={s.risco} />
                   </TableCell>
                   <TableCell className="pr-6 text-right">
@@ -141,7 +150,7 @@ export function Students() {
               {filtered.length === 0 && (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="py-10 text-center text-sm text-muted-foreground"
                   >
                     Nenhum aluno encontrado com os filtros selecionados.

@@ -12,6 +12,8 @@ import {
 import { Users, AlertTriangle, AlertCircle, TrendingDown } from "lucide-react";
 import { StatCard } from "@/components/StatCard";
 import { RiskBadge } from "@/components/RiskBadge";
+import { RiskScore } from "@/components/RiskScore";
+import { assessRisk } from "@/lib/ai";
 import {
   Card,
   CardContent,
@@ -151,6 +153,7 @@ export function Dashboard() {
                 <TableHead>Curso</TableHead>
                 <TableHead>Frequência</TableHead>
                 <TableHead>Média</TableHead>
+                <TableHead>Score IA</TableHead>
                 <TableHead className="pr-6">Risco</TableHead>
               </TableRow>
             </TableHeader>
@@ -177,6 +180,12 @@ export function Dashboard() {
                     {s.frequencia}%
                   </TableCell>
                   <TableCell>{s.media.toFixed(1)}</TableCell>
+                  <TableCell>
+                    {(() => {
+                      const a = assessRisk(s);
+                      return <RiskScore score={a.score} nivel={a.nivel} />;
+                    })()}
+                  </TableCell>
                   <TableCell className="pr-6">
                     <RiskBadge risco={s.risco} />
                   </TableCell>
