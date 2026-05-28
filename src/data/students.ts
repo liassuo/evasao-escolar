@@ -47,11 +47,71 @@ const studentsRaw: StudentRaw[] = [
   { id: 20, nome: "Sophia Cardoso", curso: "Sistemas de Informação", frequencia: 73, media: 6.5, participacao: "Média", semestre: 4 },
 ];
 
+/* ----------------------- Geração de alunos adicionais ----------------------- */
+
+const PRIMEIROS_NOMES = [
+  "Enzo", "Helena", "Miguel", "Valentina", "Arthur", "Laura", "Heitor", "Alice",
+  "Bernardo", "Manuela", "Théo", "Cecília", "Gael", "Eloá", "Ravi", "Maitê",
+  "Noah", "Heloísa", "Lorenzo", "Lívia", "Benício", "Antonella", "Anthony", "Sarah",
+  "Samuel", "Esther", "Henry", "Maria Luísa", "Murilo", "Lorena", "Otávio", "Yasmin",
+  "Caio", "Clara", "Nicolas", "Marina", "Pietro", "Olívia", "Leonardo", "Isadora",
+  "Emanuel", "Rebeca", "Augusto", "Lara", "Vitor", "Agatha", "Daniel", "Bruna",
+  "Eduardo", "Carolina", "Joaquim", "Mirella", "Bryan", "Letícia", "André", "Júlia",
+  "Levi", "Ana Júlia", "Yuri", "Catarina", "Kauã", "Luiza", "Antônio", "Maya",
+  "Ícaro", "Stella", "Breno", "Sofia", "Diego", "Melissa", "Fábio", "Vitória",
+  "Renan", "Bianca", "Igor", "Nina", "Marcelo", "Aurora", "Sérgio", "Elisa",
+];
+
+const SOBRENOMES = [
+  "Silva", "Souza", "Costa", "Pereira", "Almeida", "Nascimento", "Lima", "Araújo",
+  "Ferreira", "Carvalho", "Gomes", "Martins", "Rocha", "Ribeiro", "Alves", "Monteiro",
+  "Mendes", "Barros", "Freitas", "Cardoso", "Cavalcanti", "Teixeira", "Correia", "Pinto",
+];
+
+const PARTICIPACOES: Student["participacao"][] = ["Baixa", "Média", "Alta"];
+
+/**
+ * Gera alunos adicionais de forma determinística (sem aleatoriedade), variando
+ * indicadores a partir do índice para produzir uma distribuição realista de
+ * risco. IDs continuam a partir do último aluno do cadastro base.
+ */
+function gerarAlunos(quantidade: number, startId: number): StudentRaw[] {
+  const out: StudentRaw[] = [];
+  for (let i = 0; i < quantidade; i++) {
+    const id = startId + i;
+    const nome = `${PRIMEIROS_NOMES[i % PRIMEIROS_NOMES.length]} ${
+      SOBRENOMES[(i * 7 + 3) % SOBRENOMES.length]
+    }`;
+    const curso = COURSES[i % COURSES.length];
+    const semestre = ((i * 3) % 8) + 1;
+
+    // Frequência variando ~42–98 em ciclos; média e participação correlacionadas.
+    const freqBase = 42 + ((i * 13) % 57); // 42..98
+    const frequencia = Math.min(98, Math.max(40, freqBase));
+    const media = Number(
+      Math.min(9.6, Math.max(3.5, 3.8 + ((i * 17) % 60) / 10)).toFixed(1),
+    );
+    const participacao =
+      frequencia >= 82 && media >= 7
+        ? "Alta"
+        : frequencia < 62 || media < 5
+          ? "Baixa"
+          : PARTICIPACOES[(i + 1) % 3];
+
+    out.push({ id, nome, curso, frequencia, media, participacao, semestre });
+  }
+  return out;
+}
+
+const studentsGerados = gerarAlunos(80, studentsRaw.length + 1);
+
 /** Alunos com o nível de risco derivado dos indicadores pela IA. */
-export const students: Student[] = studentsRaw.map((s) => ({
-  ...s,
-  risco: riskLevelOf(s),
-}));
+export const students: Student[] = [...studentsRaw, ...studentsGerados].map(
+  (s) => ({
+    ...s,
+    risco: riskLevelOf(s),
+  }),
+);
 
 /* ----------------------- Derived / aggregated data ----------------------- */
 
@@ -69,15 +129,18 @@ export const estimatedDropoutRate = Math.round(
   ((highRiskCount + mediumRiskCount * 0.4) / totalStudents) * 100,
 );
 
-/** Evolução mensal de alunos em risco (mock) — usado no gráfico de linha */
-export const riskEvolution = [
-  { mes: "Jan", alto: 3, medio: 5 },
-  { mes: "Fev", alto: 4, medio: 5 },
-  { mes: "Mar", alto: 4, medio: 6 },
-  { mes: "Abr", alto: 5, medio: 6 },
-  { mes: "Mai", alto: 6, medio: 7 },
-  { mes: "Jun", alto: highRiskCount, medio: mediumRiskCount },
-];
+/**
+ * Evolução mensal de alunos em risco — curva crescente que converge para os
+ * contadores atuais (proporcional ao total, escala com qualquer nº de alunos).
+ */
+const evoFactors = [0.55, 0.64, 0.72, 0.82, 0.91, 1];
+export const riskEvolution = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"].map(
+  (mes, i) => ({
+    mes,
+    alto: Math.round(highRiskCount * evoFactors[i]),
+    medio: Math.round(mediumRiskCount * evoFactors[i]),
+  }),
+);
 
 /** Distribuição por nível de risco — gráfico de pizza */
 export const riskDistribution = [
@@ -94,12 +157,16 @@ export const avgFrequencyByCourse = COURSES.map((curso) => {
   return { curso: curso.replace("Engenharia de ", "Eng. ").replace("Sistemas de ", "Sist. "), frequencia: Math.round(media) };
 });
 
-/** Evolução da evasão estimada ao longo dos semestres (mock) */
+/**
+ * Evolução da evasão estimada ao longo dos semestres — termina na taxa atual e
+ * deriva os períodos anteriores proporcionalmente (mantém a curva coerente com
+ * qualquer nº de alunos).
+ */
 export const dropoutTrend = [
-  { periodo: "2024.1", taxa: 14 },
-  { periodo: "2024.2", taxa: 18 },
-  { periodo: "2025.1", taxa: 16 },
-  { periodo: "2025.2", taxa: 21 },
+  { periodo: "2024.1", taxa: Math.round(estimatedDropoutRate * 0.7) },
+  { periodo: "2024.2", taxa: Math.round(estimatedDropoutRate * 0.82) },
+  { periodo: "2025.1", taxa: Math.round(estimatedDropoutRate * 0.78) },
+  { periodo: "2025.2", taxa: Math.round(estimatedDropoutRate * 0.9) },
   { periodo: "2026.1", taxa: estimatedDropoutRate },
 ];
 
