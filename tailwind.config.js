@@ -10,36 +10,46 @@ export default {
     },
     extend: {
       colors: {
-        border: "hsl(214 32% 91%)",
-        input: "hsl(214 32% 91%)",
-        ring: "hsl(221 83% 53%)",
+        border: "hsl(200 24% 88%)",
+        input: "hsl(200 24% 88%)",
+        ring: "hsl(192 82% 30%)",
         background: "hsl(0 0% 100%)",
-        foreground: "hsl(222 47% 11%)",
+        foreground: "hsl(202 33% 14%)",
         primary: {
-          DEFAULT: "#2563EB",
+          DEFAULT: "#0e7490",
+          dark: "#155e75",
+          light: "#e0f2f7",
+          foreground: "#ffffff",
+        },
+        accent: {
+          DEFAULT: "#155e75",
           foreground: "#ffffff",
         },
         muted: {
-          DEFAULT: "hsl(210 40% 96%)",
-          foreground: "hsl(215 16% 47%)",
+          DEFAULT: "hsl(195 33% 96%)",
+          foreground: "hsl(200 14% 42%)",
         },
         card: {
           DEFAULT: "#ffffff",
-          foreground: "hsl(222 47% 11%)",
+          foreground: "hsl(202 33% 14%)",
         },
         risk: {
           high: "#dc2626",
-          medium: "#f59e0b",
-          low: "#16a34a",
+          "high-bg": "#fef2f2",
+          medium: "#d97706",
+          "medium-bg": "#fffbeb",
+          low: "#15803d",
+          "low-bg": "#f0fdf4",
         },
       },
       borderRadius: {
-        lg: "0.75rem",
+        lg: "0.625rem",
         md: "0.5rem",
         sm: "0.375rem",
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["Fraunces", "Georgia", "ui-serif", "serif"],
       },
       keyframes: {
         "fade-in": {

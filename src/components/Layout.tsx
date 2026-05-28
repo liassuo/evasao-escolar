@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, BarChart3, Search } from "lucide-react";
+import { LayoutDashboard, Users, BarChart3 } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import { cn } from "@/lib/utils";
 
 const mobileLinks = [
@@ -18,23 +19,22 @@ const titles: Record<string, string> = {
 export function Layout() {
   const { pathname } = useLocation();
   const title =
-    titles[pathname] ?? (pathname.startsWith("/alunos") ? "Perfil do Aluno" : "PersistIA");
+    titles[pathname] ?? (pathname.startsWith("/alunos") ? "Perfil do Aluno" : "PersistAI");
 
   return (
     <div className="flex min-h-screen bg-muted">
       <Sidebar />
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-card/80 px-5 backdrop-blur md:px-8">
+        <header className="sticky top-0 z-10 flex h-16 items-center justify-between border-b border-border bg-card px-5 md:px-8">
           <div>
             <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
             <p className="hidden text-xs text-muted-foreground sm:block">
-              Monitoramento Inteligente de Evasão Escolar
+              Sistema de Acompanhamento Estudantil e Risco de Evasão
             </p>
           </div>
-          <div className="hidden items-center gap-2 rounded-md border border-input bg-muted/50 px-3 py-2 text-sm text-muted-foreground sm:flex">
-            <Search className="h-4 w-4" />
-            <span>Buscar alunos…</span>
+          <div className="hidden w-full max-w-sm pl-4 sm:block">
+            <GlobalSearch />
           </div>
         </header>
 

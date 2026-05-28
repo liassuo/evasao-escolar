@@ -13,17 +13,32 @@
     @apply bg-muted text-foreground font-sans antialiased;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+  /* Títulos institucionais com display serifada */
+  h1,
+  h2 {
+    @apply font-display;
+    letter-spacing: -0.01em;
+  }
+  /* Números alinhados em tabelas e indicadores */
+  table,
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 @layer utilities {
   .card-shadow {
     box-shadow:
-      0 1px 2px rgba(16, 24, 40, 0.04),
-      0 1px 3px rgba(16, 24, 40, 0.06);
+      0 1px 2px rgba(13, 42, 51, 0.04),
+      0 1px 3px rgba(13, 42, 51, 0.06);
   }
   .card-shadow-lg {
     box-shadow:
-      0 4px 6px -1px rgba(16, 24, 40, 0.06),
-      0 12px 24px -8px rgba(16, 24, 40, 0.1);
+      0 4px 6px -1px rgba(13, 42, 51, 0.06),
+      0 12px 24px -8px rgba(13, 42, 51, 0.1);
+  }
+  /* Faixa institucional sutil no topo de cabeçalhos/seções */
+  .rule-accent {
+    background-image: linear-gradient(90deg, #0e7490 0%, #155e75 100%);
   }
 }

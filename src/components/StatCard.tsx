@@ -11,10 +11,10 @@ interface StatCardProps {
 }
 
 const accentMap = {
-  blue: { ring: "bg-blue-50 text-primary", bar: "bg-primary" },
-  red: { ring: "bg-red-50 text-risk-high", bar: "bg-risk-high" },
-  amber: { ring: "bg-amber-50 text-risk-medium", bar: "bg-risk-medium" },
-  green: { ring: "bg-green-50 text-risk-low", bar: "bg-risk-low" },
+  blue: { ring: "bg-primary-light text-primary", bar: "bg-primary" },
+  red: { ring: "bg-risk-high-bg text-risk-high", bar: "bg-risk-high" },
+  amber: { ring: "bg-risk-medium-bg text-risk-medium", bar: "bg-risk-medium" },
+  green: { ring: "bg-risk-low-bg text-risk-low", bar: "bg-risk-low" },
 };
 
 export function StatCard({
@@ -26,21 +26,24 @@ export function StatCard({
 }: StatCardProps) {
   const a = accentMap[accent];
   return (
-    <Card className="overflow-hidden transition-shadow hover:card-shadow-lg">
-      <CardContent className="flex items-center gap-4 p-5">
+    <Card className="relative overflow-hidden transition-shadow hover:card-shadow-lg">
+      <span className={cn("absolute inset-y-0 left-0 w-1", a.bar)} aria-hidden />
+      <CardContent className="flex items-center gap-4 p-5 pl-6">
         <div
           className={cn(
-            "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl",
+            "flex h-11 w-11 shrink-0 items-center justify-center rounded-lg",
             a.ring,
           )}
         >
-          <Icon className="h-6 w-6" />
+          <Icon className="h-[22px] w-[22px]" />
         </div>
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-muted-foreground">
             {title}
           </p>
-          <p className="text-2xl font-bold tracking-tight">{value}</p>
+          <p className="tabular font-display text-[26px] font-bold leading-tight tracking-tight">
+            {value}
+          </p>
           {hint && (
             <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
           )}

@@ -16,9 +16,11 @@ export function Sidebar() {
           <GraduationCap className="h-5 w-5" />
         </div>
         <div className="leading-tight">
-          <p className="text-lg font-extrabold tracking-tight">PersistIA</p>
+          <p className="font-display text-lg font-bold tracking-tight">
+            Persist<span className="text-primary">AI</span>
+          </p>
           <p className="text-[11px] font-medium text-muted-foreground">
-            Monitoramento de Evasão
+            Acompanhamento Estudantil
           </p>
         </div>
       </div>

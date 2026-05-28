@@ -2,11 +2,14 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   BarChart,
   Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
   Cell,
 } from "recharts";
 import {
@@ -17,8 +20,11 @@ import {
   FileSearch,
   CheckCircle2,
   ClipboardList,
+  History,
+  ListChecks,
 } from "lucide-react";
 import { RiskBadge } from "@/components/RiskBadge";
+import { Timeline } from "@/components/Timeline";
 import {
   Card,
   CardContent,
@@ -27,7 +33,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { students } from "@/data/students";
+import { students, studentHistory, studentTimeline } from "@/data/students";
 import { generateAIAnalysis, generateRecommendations } from "@/lib/ai";
 
 export function StudentProfile() {
@@ -55,13 +61,15 @@ export function StudentProfile() {
 
   const analysis = generateAIAnalysis(student);
   const recommendations = generateRecommendations(student);
+  const history = studentHistory(student);
+  const timeline = studentTimeline(student);
   const participacaoScore =
     student.participacao === "Alta" ? 85 : student.participacao === "Média" ? 55 : 28;
 
   const performanceData = [
-    { nome: "Frequência", valor: student.frequencia, cor: "#1e40af" },
-    { nome: "Média (x10)", valor: Math.round(student.media * 10), cor: "#2563EB" },
-    { nome: "Participação", valor: participacaoScore, cor: "#60a5fa" },
+    { nome: "Frequência", valor: student.frequencia, cor: "#0e7490" },
+    { nome: "Média (x10)", valor: Math.round(student.media * 10), cor: "#155e75" },
+    { nome: "Participação", valor: participacaoScore, cor: "#67b8c9" },
   ];
 
   return (
@@ -225,6 +233,98 @@ export function StudentProfile() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Histórico acadêmico + linha do tempo */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+        <Card className="lg:col-span-3">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <History className="h-5 w-5 text-primary" />
+              Histórico Acadêmico
+            </CardTitle>
+            <CardDescription>
+              Evolução da frequência e da média nos últimos meses
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-64 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart
+                  data={history}
+                  margin={{ top: 8, right: 12, left: -18, bottom: 0 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
+                  <XAxis
+                    dataKey="mes"
+                    tick={{ fontSize: 12, fill: "#64748b" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    yAxisId="freq"
+                    domain={[0, 100]}
+                    tick={{ fontSize: 11, fill: "#64748b" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    yAxisId="media"
+                    orientation="right"
+                    domain={[0, 10]}
+                    tick={{ fontSize: 11, fill: "#64748b" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      borderRadius: 10,
+                      border: "1px solid #e2e8f0",
+                      fontSize: 13,
+                    }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Line
+                    yAxisId="freq"
+                    type="monotone"
+                    dataKey="frequencia"
+                    name="Frequência (%)"
+                    stroke="#0e7490"
+                    strokeWidth={2.5}
+                    dot={{ r: 3 }}
+                    activeDot={{ r: 5 }}
+                  />
+                  <Line
+                    yAxisId="media"
+                    type="monotone"
+                    dataKey="media"
+                    name="Média (0–10)"
+                    stroke="#155e75"
+                    strokeWidth={2.5}
+                    strokeDasharray="5 4"
+                    dot={{ r: 3 }}
+                    activeDot={{ r: 5 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ListChecks className="h-5 w-5 text-primary" />
+              Linha do Tempo de Acompanhamento
+            </CardTitle>
+            <CardDescription>
+              Registros, faltas, alertas e intervenções
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Timeline events={timeline} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -21,3 +21,20 @@ export interface Student {
   semestre: number;
   risco: RiskLevel;
 }
+
+/** Ponto mensal do histórico acadêmico do aluno. */
+export interface MonthlyPoint {
+  mes: string;
+  frequencia: number;
+  media: number;
+}
+
+export type EventKind = "falta" | "alerta" | "intervencao" | "registro";
+
+/** Evento na linha do tempo de acompanhamento do aluno. */
+export interface TimelineEvent {
+  data: string;
+  tipo: EventKind;
+  titulo: string;
+  descricao: string;
+}

@@ -1,4 +1,10 @@
-import type { Student, Course, RiskLevel } from "@/types";
+import type {
+  Student,
+  Course,
+  RiskLevel,
+  MonthlyPoint,
+  TimelineEvent,
+} from "@/types";
 
 export const COURSES: Course[] = [
   "Engenharia de Software",
@@ -82,3 +88,173 @@ export const dropoutTrend = [
   { periodo: "2025.2", taxa: 21 },
   { periodo: "2026.1", taxa: estimatedDropoutRate },
 ];
+
+/* ----------------------- Agregações filtráveis (Relatórios) ----------------------- */
+
+export interface ReportFilters {
+  curso: Course | "todos";
+  semestre: number | "todos";
+}
+
+const shortCourse = (curso: string) =>
+  curso.replace("Engenharia de ", "Eng. ").replace("Sistemas de ", "Sist. ");
+
+/** Aplica os filtros de curso/semestre ao conjunto de alunos. */
+export function filterStudents(filters: ReportFilters): Student[] {
+  return students.filter(
+    (s) =>
+      (filters.curso === "todos" || s.curso === filters.curso) &&
+      (filters.semestre === "todos" || s.semestre === filters.semestre),
+  );
+}
+
+/** Distribuição por nível de risco para um subconjunto de alunos. */
+export function riskDistributionOf(subset: Student[]) {
+  return [
+    {
+      nome: "Baixo",
+      valor: subset.filter((s) => s.risco === "baixo").length,
+      cor: "#15803d",
+    },
+    {
+      nome: "Médio",
+      valor: subset.filter((s) => s.risco === "medio").length,
+      cor: "#d97706",
+    },
+    {
+      nome: "Alto",
+      valor: subset.filter((s) => s.risco === "alto").length,
+      cor: "#dc2626",
+    },
+  ];
+}
+
+/** Frequência média por curso para um subconjunto de alunos. */
+export function avgFrequencyByCourseOf(subset: Student[]) {
+  return COURSES.map((curso) => {
+    const turma = subset.filter((s) => s.curso === curso);
+    const media = turma.length
+      ? Math.round(turma.reduce((acc, s) => acc + s.frequencia, 0) / turma.length)
+      : 0;
+    return { curso: shortCourse(curso), frequencia: media };
+  }).filter((c) => c.frequencia > 0);
+}
+
+/** Resumo numérico (cards) para um subconjunto de alunos. */
+export function summaryOf(subset: Student[]) {
+  const total = subset.length;
+  const alto = subset.filter((s) => s.risco === "alto").length;
+  const medio = subset.filter((s) => s.risco === "medio").length;
+  const freqMedia = total
+    ? Math.round(subset.reduce((a, s) => a + s.frequencia, 0) / total)
+    : 0;
+  const evasao = total ? Math.round(((alto + medio * 0.4) / total) * 100) : 0;
+  return { total, alto, medio, freqMedia, evasao };
+}
+
+/* ---------------- Histórico e eventos por aluno (determinístico) ---------------- */
+
+const HIST_MESES = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun"];
+const clamp = (n: number, min: number, max: number) =>
+  Math.min(max, Math.max(min, n));
+
+/**
+ * Gera o histórico mensal de frequência e média de um aluno.
+ * Determinístico (sem Math.random): parte de uma linha de base e converge
+ * para os valores atuais, oscilando conforme o id — alunos em risco pioram,
+ * alunos saudáveis se mantêm estáveis.
+ */
+export function studentHistory(student: Student): MonthlyPoint[] {
+  const trend =
+    student.risco === "alto" ? -1 : student.risco === "medio" ? -0.5 : 0.15;
+  return HIST_MESES.map((mes, i) => {
+    const fromEnd = HIST_MESES.length - 1 - i; // 5..0
+    const wobble = ((student.id + i) % 3) - 1; // -1, 0, 1 — oscilação reprodutível
+    const freq = clamp(
+      Math.round(student.frequencia + fromEnd * trend * 6 + wobble * 2),
+      30,
+      100,
+    );
+    const media = clamp(
+      Number((student.media + fromEnd * trend * 0.5 + wobble * 0.15).toFixed(1)),
+      2,
+      10,
+    );
+    return { mes, frequencia: freq, media };
+  });
+}
+
+/**
+ * Gera a linha do tempo de acompanhamento de um aluno a partir dos seus
+ * indicadores. Quanto maior o risco, mais eventos de falta/alerta/intervenção.
+ */
+export function studentTimeline(student: Student): TimelineEvent[] {
+  const eventos: TimelineEvent[] = [];
+
+  eventos.push({
+    data: "02 Fev",
+    tipo: "registro",
+    titulo: "Início do período letivo",
+    descricao: `Matrícula confirmada em ${student.curso}, ${student.semestre}º semestre.`,
+  });
+
+  if (student.frequencia < 75) {
+    eventos.push({
+      data: "18 Mar",
+      tipo: "falta",
+      titulo: "Sequência de faltas registrada",
+      descricao:
+        "Ausências consecutivas identificadas no controle de frequência das disciplinas.",
+    });
+  }
+
+  if (student.media < 7) {
+    eventos.push({
+      data: "05 Abr",
+      tipo: "alerta",
+      titulo: "Queda de desempenho",
+      descricao:
+        "Média abaixo do esperado em avaliações parciais; disciplina sinalizada para acompanhamento.",
+    });
+  }
+
+  if (student.risco === "alto") {
+    eventos.push({
+      data: "22 Abr",
+      tipo: "intervencao",
+      titulo: "Encaminhamento à coordenação",
+      descricao:
+        "Aluno classificado em risco elevado de evasão; contato de acompanhamento agendado.",
+    });
+  } else if (student.risco === "medio") {
+    eventos.push({
+      data: "28 Abr",
+      tipo: "intervencao",
+      titulo: "Convite para monitoria",
+      descricao:
+        "Aluno orientado a participar de monitoria nas disciplinas com menor rendimento.",
+    });
+  }
+
+  if (student.participacao === "Baixa") {
+    eventos.push({
+      data: "12 Mai",
+      tipo: "alerta",
+      titulo: "Baixo engajamento",
+      descricao:
+        "Participação reduzida em atividades e fóruns; reforço de acompanhamento recomendado.",
+    });
+  }
+
+  if (student.risco === "baixo") {
+    eventos.push({
+      data: "15 Mai",
+      tipo: "registro",
+      titulo: "Desempenho regular",
+      descricao:
+        "Indicadores dentro dos parâmetros esperados; acompanhamento de rotina mantido.",
+    });
+  }
+
+  return eventos;
+}
