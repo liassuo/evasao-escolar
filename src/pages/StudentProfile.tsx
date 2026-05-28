@@ -26,6 +26,7 @@ import {
 import { RiskBadge } from "@/components/RiskBadge";
 import { RiskScore } from "@/components/RiskScore";
 import { Timeline } from "@/components/Timeline";
+import { InterventionPlan } from "@/components/InterventionPlan";
 import {
   Card,
   CardContent,
@@ -279,6 +280,9 @@ export function StudentProfile() {
           </Card>
         </div>
       </div>
+
+      {/* Predição de evasão + plano de intervenção da IA */}
+      <InterventionPlan student={student} />
 
       {/* Histórico acadêmico + linha do tempo */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">

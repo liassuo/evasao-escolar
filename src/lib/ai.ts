@@ -1,4 +1,11 @@
-import type { Student, RiskLevel, RiskAssessment, RiskFactor } from "@/types";
+import type {
+  Student,
+  RiskLevel,
+  RiskAssessment,
+  RiskFactor,
+  DropoutPrediction,
+  InterventionStep,
+} from "@/types";
 
 /** Indicadores brutos usados pelo motor de risco (subconjunto de Student). */
 export type RiskInput = Pick<
@@ -110,6 +117,109 @@ export function generateRecommendations(student: Student): string[] {
   }
 
   return recs;
+}
+
+/**
+ * Predição de evasão "pela IA" para uma janela futura (padrão: 60 dias).
+ * Converte o score de risco em probabilidade, ajusta pela tendência recente
+ * (derivada da relação entre frequência e desempenho) e estima a confiança.
+ * Determinístico e explicável — não há modelo real.
+ */
+export function predictDropout(student: Student, janelaDias = 60): DropoutPrediction {
+  const { score, nivel } = assessRisk(student);
+
+  // A probabilidade parte do score e é suavizada (o score é "agressivo").
+  let probabilidade = Math.round(score * 0.82 + (score >= 55 ? 8 : 0));
+  probabilidade = Math.min(96, Math.max(3, probabilidade));
+
+  // Tendência: frequência e média muito baixas indicam piora ativa.
+  const tendencia: DropoutPrediction["tendencia"] =
+    student.frequencia < 60 || student.media < 5
+      ? "piora"
+      : student.frequencia >= 85 && student.media >= 7
+        ? "melhora"
+        : "estavel";
+
+  // Confiança: mais alta quando os sinais são consistentes (extremos).
+  const confianca: DropoutPrediction["confianca"] =
+    nivel === "alto" || nivel === "baixo" ? "Alta" : "Média";
+
+  const tendenciaTexto =
+    tendencia === "piora"
+      ? "com sinais de piora ativa nos indicadores recentes"
+      : tendencia === "melhora"
+        ? "com trajetória estável e indicadores saudáveis"
+        : "com indicadores estáveis, porém atenção recomendada";
+
+  const explicacao = `O modelo estima ${probabilidade}% de probabilidade de evasão em ${janelaDias} dias, ${tendenciaTexto}. Confiança ${confianca.toLowerCase()} — baseada na consistência entre frequência, desempenho e participação.`;
+
+  return { probabilidade, janelaDias, confianca, tendencia, explicacao };
+}
+
+/**
+ * Plano de intervenção estruturado gerado pela IA a partir do perfil de risco.
+ * Cada etapa traz ação, prazo, responsável e prioridade — adaptados aos fatores
+ * que mais pesam para o aluno.
+ */
+export function interventionPlan(student: Student): InterventionStep[] {
+  const { nivel } = assessRisk(student);
+  const steps: InterventionStep[] = [];
+
+  if (nivel === "alto") {
+    steps.push({
+      titulo: "Contato imediato com o estudante",
+      descricao:
+        "Coordenação realiza conversa individual para entender as causas do afastamento e reforçar o vínculo institucional.",
+      prazo: "Em até 3 dias",
+      responsavel: "Coordenação do curso",
+      prioridade: "alta",
+    });
+  }
+
+  if (student.frequencia < 75) {
+    steps.push({
+      titulo: "Plano de recuperação de frequência",
+      descricao:
+        "Acordar metas semanais de presença e acompanhar a frequência nas próximas quatro semanas.",
+      prazo: "Próximas 4 semanas",
+      responsavel: "Secretaria acadêmica",
+      prioridade: student.frequencia < 60 ? "alta" : "media",
+    });
+  }
+
+  if (student.media < 7) {
+    steps.push({
+      titulo: "Encaminhamento para monitoria",
+      descricao:
+        "Inscrever o estudante em monitoria nas disciplinas de menor rendimento e avaliar dificuldades específicas.",
+      prazo: "Próximas 2 semanas",
+      responsavel: "Núcleo de apoio pedagógico",
+      prioridade: student.media < 5 ? "alta" : "media",
+    });
+  }
+
+  if (student.participacao === "Baixa") {
+    steps.push({
+      titulo: "Reengajamento em atividades",
+      descricao:
+        "Convidar para grupos de estudo e projetos de extensão para fortalecer o pertencimento e a participação.",
+      prazo: "Próximo mês",
+      responsavel: "Coordenação / tutoria",
+      prioridade: "baixa",
+    });
+  }
+
+  // Etapa de acompanhamento sempre presente para fechar o ciclo.
+  steps.push({
+    titulo: "Reavaliação do caso",
+    descricao:
+      "Revisar os indicadores após as ações e atualizar a classificação de risco do estudante.",
+    prazo: nivel === "alto" ? "Em 30 dias" : "Em 45 dias",
+    responsavel: "Equipe de permanência",
+    prioridade: nivel === "baixo" ? "baixa" : "media",
+  });
+
+  return steps;
 }
 
 function listToText(items: string[]): string {

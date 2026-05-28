@@ -44,6 +44,30 @@ export interface RiskAssessment {
   fatores: RiskFactor[];
 }
 
+/** Predição de evasão "pela IA" para uma janela futura. */
+export interface DropoutPrediction {
+  /** Probabilidade de evasão na janela (0–100%). */
+  probabilidade: number;
+  /** Janela da predição em dias. */
+  janelaDias: number;
+  /** Confiança do modelo na predição. */
+  confianca: "Baixa" | "Média" | "Alta";
+  /** Tendência recente: piorando, estável ou melhorando. */
+  tendencia: "piora" | "estavel" | "melhora";
+  explicacao: string;
+}
+
+export type InterventionPriority = "alta" | "media" | "baixa";
+
+/** Etapa de um plano de intervenção gerado pela IA. */
+export interface InterventionStep {
+  titulo: string;
+  descricao: string;
+  prazo: string;
+  responsavel: string;
+  prioridade: InterventionPriority;
+}
+
 export type EventKind = "falta" | "alerta" | "intervencao" | "registro";
 
 /** Evento na linha do tempo de acompanhamento do aluno. */
