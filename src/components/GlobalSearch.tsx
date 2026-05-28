@@ -88,7 +88,7 @@ export function GlobalSearch() {
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => setOpen(true)}
         onKeyDown={onInputKey}
-        placeholder="Buscar alunos por nome ou curso…"
+        placeholder="Buscar alunos…"
         aria-label="Buscar alunos"
         className="h-11 w-full rounded-full border border-input bg-muted/50 pl-10 pr-12 text-sm outline-none transition-colors focus:border-primary focus:bg-card focus:ring-2 focus:ring-ring/25"
       />

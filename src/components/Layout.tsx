@@ -53,7 +53,7 @@ export function Layout() {
 
           {/* Busca + relógio (direita) */}
           <div className="ml-auto flex items-center gap-5">
-            <div className="hidden w-full max-w-[240px] lg:block">
+            <div className="hidden w-[220px] lg:block xl:w-[280px]">
               <GlobalSearch />
             </div>
             <Clock />
