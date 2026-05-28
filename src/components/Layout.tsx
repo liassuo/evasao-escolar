@@ -2,7 +2,6 @@ import { Outlet, NavLink } from "react-router-dom";
 import { LayoutDashboard, Users, BarChart3 } from "lucide-react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { Clock } from "@/components/Clock";
-import { BrandIcon } from "@/components/BrandIcon";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -18,17 +17,17 @@ export function Layout() {
         {/* Linha principal: marca (esq) · abas centralizadas · busca+relógio (dir) */}
         <div className="mx-auto grid h-16 w-full max-w-[1400px] grid-cols-[1fr_auto_1fr] items-center gap-4 px-5 md:px-8">
           {/* Marca */}
-          <div className="flex items-center gap-2.5">
-            <BrandIcon className="h-10 w-10 shrink-0" />
-            <div className="leading-tight">
-              <p className="font-display text-lg font-semibold tracking-tight">
-                Persist<span className="text-primary">AI</span>
-              </p>
-              <p className="hidden text-[11px] font-light text-muted-foreground sm:block">
-                Acompanhamento Estudantil
-              </p>
-            </div>
-          </div>
+          <NavLink
+            to="/"
+            className="flex items-center"
+            aria-label="PersistAI — início"
+          >
+            <img
+              src="/logo.png"
+              alt="PersistAI"
+              className="h-9 w-auto object-contain"
+            />
+          </NavLink>
 
           {/* Abas centralizadas (desktop) */}
           <nav className="hidden items-center gap-1 md:flex">
