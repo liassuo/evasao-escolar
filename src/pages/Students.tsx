@@ -64,7 +64,7 @@ export function Students() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Ex.: João Silva"
-                  className="h-10 w-full rounded-md border border-input bg-card pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1"
+                  className="h-11 w-full rounded-lg border border-input bg-card pl-9 pr-3 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25"
                 />
               </div>
             </div>

@@ -10,11 +10,11 @@ export default {
     },
     extend: {
       colors: {
-        border: "hsl(200 24% 88%)",
-        input: "hsl(200 24% 88%)",
-        ring: "hsl(192 82% 30%)",
+        border: "hsl(205 25% 91%)",
+        input: "hsl(205 25% 89%)",
+        ring: "hsl(192 82% 34%)",
         background: "hsl(0 0% 100%)",
-        foreground: "hsl(202 33% 14%)",
+        foreground: "hsl(202 30% 16%)",
         primary: {
           DEFAULT: "#0e7490",
           dark: "#155e75",
@@ -26,8 +26,8 @@ export default {
           foreground: "#ffffff",
         },
         muted: {
-          DEFAULT: "hsl(195 33% 96%)",
-          foreground: "hsl(200 14% 42%)",
+          DEFAULT: "hsl(200 40% 97%)",
+          foreground: "hsl(200 12% 46%)",
         },
         card: {
           DEFAULT: "#ffffff",
@@ -43,13 +43,14 @@ export default {
         },
       },
       borderRadius: {
-        lg: "0.625rem",
-        md: "0.5rem",
-        sm: "0.375rem",
+        xl: "1.25rem",
+        lg: "1rem",
+        md: "0.75rem",
+        sm: "0.5rem",
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["Fraunces", "Georgia", "ui-serif", "serif"],
+        display: ["Outfit", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       keyframes: {
         "fade-in": {

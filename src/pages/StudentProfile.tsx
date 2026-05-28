@@ -100,7 +100,7 @@ export function StudentProfile() {
                 .join("")}
             </div>
             <div>
-              <h2 className="text-xl font-bold tracking-tight">
+              <h2 className="text-xl font-medium tracking-tight">
                 {student.nome}
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -213,7 +213,7 @@ export function StudentProfile() {
                   <p className="text-xs font-medium text-muted-foreground">
                     Score de risco de evasão
                   </p>
-                  <p className="tabular font-display text-2xl font-bold leading-tight">
+                  <p className="tabular font-display text-2xl font-semibold leading-tight">
                     {risk.score}
                     <span className="text-base font-medium text-muted-foreground">
                       /100
@@ -403,7 +403,7 @@ function MetricCard({
           </span>
           <Icon className="h-4 w-4 text-muted-foreground" />
         </div>
-        <p className="text-2xl font-bold tracking-tight">{value}</p>
+        <p className="font-display text-2xl font-medium tracking-tight">{value}</p>
         <Progress value={progress} indicatorClassName={bar} />
       </CardContent>
     </Card>

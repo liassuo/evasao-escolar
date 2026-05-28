@@ -11,3 +11,6 @@ _probe.txt
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+
+# Test artifacts
+.playwright-mcp/

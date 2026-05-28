@@ -81,7 +81,7 @@ export function GlobalSearch() {
 
   return (
     <div ref={containerRef} className="relative w-full max-w-sm">
-      <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+      <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <input
         ref={inputRef}
         value={query}
@@ -90,14 +90,14 @@ export function GlobalSearch() {
         onKeyDown={onInputKey}
         placeholder="Buscar alunos por nome ou curso…"
         aria-label="Buscar alunos"
-        className="h-10 w-full rounded-md border border-input bg-muted/40 pl-9 pr-12 text-sm outline-none transition-colors focus:border-primary focus:bg-card focus:ring-2 focus:ring-ring/30"
+        className="h-11 w-full rounded-full border border-input bg-muted/50 pl-10 pr-12 text-sm outline-none transition-colors focus:border-primary focus:bg-card focus:ring-2 focus:ring-ring/25"
       />
       <kbd className="pointer-events-none absolute right-2.5 top-1/2 hidden -translate-y-1/2 rounded border border-border bg-card px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground sm:block">
         /
       </kbd>
 
       {open && query.trim() && (
-        <div className="absolute left-0 right-0 top-12 z-30 overflow-hidden rounded-md border border-border bg-card card-shadow-lg">
+        <div className="absolute left-0 right-0 top-12 z-30 overflow-hidden rounded-2xl border border-border bg-card card-shadow-lg">
           {results.length === 0 ? (
             <p className="px-4 py-6 text-center text-sm text-muted-foreground">
               Nenhum aluno encontrado para “{query.trim()}”.
