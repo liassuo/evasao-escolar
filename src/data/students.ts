@@ -329,3 +329,64 @@ export const todaySummary = {
   medio: mediumRiskCount,
   evasao: estimatedDropoutRate,
 };
+
+/* ----------------------- Importação simulada (demonstração) ----------------------- */
+
+export interface DisciplinaHistorico {
+  disciplina: string;
+  carga: number;
+  nota: number;
+  frequencia: number;
+  situacao: "Aprovado" | "Reprovado" | "Cursando";
+}
+
+export interface HistoricoEscolar {
+  aluno: string;
+  matricula: string;
+  curso: Course;
+  periodo: string;
+  disciplinas: DisciplinaHistorico[];
+}
+
+/**
+ * Histórico escolar de exemplo "extraído" de um arquivo importado.
+ * Conteúdo simulado para demonstração — em um sistema real, viria do parsing
+ * do PDF/CSV enviado.
+ */
+export const historicoExemplo: HistoricoEscolar = {
+  aluno: "Davi Valerio",
+  matricula: "2023.1.04812",
+  curso: "Engenharia de Software",
+  periodo: "2026.1 · 6º semestre",
+  disciplinas: [
+    { disciplina: "Estruturas de Dados", carga: 80, nota: 5.2, frequencia: 62, situacao: "Cursando" },
+    { disciplina: "Banco de Dados", carga: 80, nota: 4.1, frequencia: 55, situacao: "Cursando" },
+    { disciplina: "Engenharia de Requisitos", carga: 60, nota: 6.0, frequencia: 70, situacao: "Cursando" },
+    { disciplina: "Cálculo III", carga: 80, nota: 3.4, frequencia: 48, situacao: "Reprovado" },
+    { disciplina: "Programação Web", carga: 80, nota: 6.8, frequencia: 74, situacao: "Cursando" },
+    { disciplina: "Sistemas Operacionais", carga: 60, nota: 5.5, frequencia: 58, situacao: "Cursando" },
+  ],
+};
+
+/** Lista de frequência de exemplo "importada" (sessões registradas por aluno). */
+export interface FrequenciaRegistro {
+  aluno: string;
+  curso: Course;
+  aulasPrevistas: number;
+  aulasPresentes: number;
+  frequencia: number;
+}
+
+export const frequenciaImportada: FrequenciaRegistro[] = students
+  .slice(0, 8)
+  .map((s) => {
+    const previstas = 48;
+    const presentes = Math.round((s.frequencia / 100) * previstas);
+    return {
+      aluno: s.nome,
+      curso: s.curso,
+      aulasPrevistas: previstas,
+      aulasPresentes: presentes,
+      frequencia: s.frequencia,
+    };
+  });

@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, ChevronRight } from "lucide-react";
+import { Search, ChevronRight, Upload, ChevronDown } from "lucide-react";
 import { RiskBadge } from "@/components/RiskBadge";
 import { RiskScore } from "@/components/RiskScore";
+import { ImportPanel } from "@/components/ImportPanel";
 import { assessRisk } from "@/lib/ai";
 import {
   Card,
@@ -28,6 +29,7 @@ export function Students() {
   const [query, setQuery] = useState("");
   const [curso, setCurso] = useState("todos");
   const [risco, setRisco] = useState("todos");
+  const [importOpen, setImportOpen] = useState(false);
 
   const filtered = useMemo(
     () =>
@@ -44,12 +46,34 @@ export function Students() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="page-title">Alunos</h1>
-        <p className="page-subtitle">
-          Acompanhamento individual e classificação de risco de evasão
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="page-title">Alunos</h1>
+          <p className="page-subtitle">
+            Acompanhamento individual e classificação de risco de evasão
+          </p>
+        </div>
+        <button
+          onClick={() => setImportOpen((v) => !v)}
+          className="inline-flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:border-primary/50 hover:bg-muted"
+          aria-expanded={importOpen}
+        >
+          <Upload className="h-4 w-4 text-primary" />
+          Importar dados
+          <ChevronDown
+            className={
+              "h-4 w-4 text-muted-foreground transition-transform " +
+              (importOpen ? "rotate-180" : "")
+            }
+          />
+        </button>
       </div>
+
+      {importOpen && (
+        <div className="animate-fade-in">
+          <ImportPanel />
+        </div>
+      )}
 
       <Card>
         <CardHeader>
