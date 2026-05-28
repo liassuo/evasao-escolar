@@ -390,3 +390,51 @@ export const frequenciaImportada: FrequenciaRegistro[] = students
       frequencia: s.frequencia,
     };
   });
+
+/* ----------------------- Turmas / Cursos ----------------------- */
+
+/** Converte o nome do curso em slug de URL e vice-versa. */
+export function courseSlug(curso: Course): string {
+  return curso
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/\s+/g, "-");
+}
+
+export function courseFromSlug(slug: string): Course | undefined {
+  return COURSES.find((c) => courseSlug(c) === slug);
+}
+
+/** Alunos de um curso. */
+export function studentsOfCourse(curso: Course): Student[] {
+  return students.filter((s) => s.curso === curso);
+}
+
+/** Frequência média por semestre dentro de um curso (para gráfico). */
+export function frequencyBySemester(curso: Course) {
+  const turma = studentsOfCourse(curso);
+  const semestres = [...new Set(turma.map((s) => s.semestre))].sort(
+    (a, b) => a - b,
+  );
+  return semestres.map((sem) => {
+    const alunos = turma.filter((s) => s.semestre === sem);
+    const media = Math.round(
+      alunos.reduce((acc, s) => acc + s.frequencia, 0) / alunos.length,
+    );
+    return { semestre: `${sem}º`, frequencia: media, alunos: alunos.length };
+  });
+}
+
+/** Resumo consolidado de cada curso (para a lista de cursos). */
+export function courseSummaries() {
+  return COURSES.map((curso) => {
+    const turma = studentsOfCourse(curso);
+    const total = turma.length;
+    const alto = turma.filter((s) => s.risco === "alto").length;
+    const freqMedia = total
+      ? Math.round(turma.reduce((a, s) => a + s.frequencia, 0) / total)
+      : 0;
+    return { curso, total, alto, freqMedia };
+  });
+}

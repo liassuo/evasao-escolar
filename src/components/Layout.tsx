@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { Home, LayoutDashboard, Users, BarChart3 } from "lucide-react";
+import { Home, LayoutDashboard, Users, GraduationCap, BarChart3 } from "lucide-react";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { Clock } from "@/components/Clock";
 import { cn } from "@/lib/utils";
@@ -8,6 +8,7 @@ const links = [
   { to: "/", label: "Início", icon: Home, end: true },
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard, end: false },
   { to: "/alunos", label: "Alunos", icon: Users, end: false },
+  { to: "/cursos", label: "Cursos", icon: GraduationCap, end: false },
   { to: "/relatorios", label: "Relatórios", icon: BarChart3, end: false },
 ];
 

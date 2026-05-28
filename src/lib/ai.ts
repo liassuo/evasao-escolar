@@ -222,6 +222,51 @@ export function interventionPlan(student: Student): InterventionStep[] {
   return steps;
 }
 
+/**
+ * Leitura da IA sobre uma turma/curso: identifica o semestre que concentra
+ * maior risco e os fatores predominantes. Determinístico, baseado nos alunos.
+ */
+export function courseInsight(curso: string, turma: Student[]): string {
+  if (turma.length === 0) {
+    return `Não há alunos monitorados em ${curso} no momento.`;
+  }
+
+  const alto = turma.filter((s) => assessRisk(s).nivel === "alto").length;
+  const freqMedia = Math.round(
+    turma.reduce((a, s) => a + s.frequencia, 0) / turma.length,
+  );
+
+  // Semestre com maior concentração de risco alto.
+  const porSemestre = new Map<number, { total: number; alto: number }>();
+  for (const s of turma) {
+    const e = porSemestre.get(s.semestre) ?? { total: 0, alto: 0 };
+    e.total += 1;
+    if (assessRisk(s).nivel === "alto") e.alto += 1;
+    porSemestre.set(s.semestre, e);
+  }
+  let semestreCritico = 0;
+  let maxAlto = 0;
+  for (const [sem, e] of porSemestre) {
+    if (e.alto > maxAlto) {
+      maxAlto = e.alto;
+      semestreCritico = sem;
+    }
+  }
+
+  const baixaFreq = turma.filter((s) => s.frequencia < 75).length;
+  const fatorPredominante =
+    baixaFreq >= turma.length / 2
+      ? "a frequência reduzida é o fator predominante"
+      : "o desempenho acadêmico é o fator de maior atenção";
+
+  const concentracao =
+    maxAlto > 0
+      ? ` O risco concentra-se no ${semestreCritico}º semestre, que reúne o maior número de alunos em risco elevado.`
+      : "";
+
+  return `A turma de ${curso} apresenta frequência média de ${freqMedia}% e ${alto} aluno(s) em risco elevado de evasão. Na leitura dos indicadores, ${fatorPredominante}.${concentracao}`;
+}
+
 function listToText(items: string[]): string {
   if (items.length === 1) return items[0];
   return `${items.slice(0, -1).join(", ")} e ${items[items.length - 1]}`;

@@ -35,7 +35,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { students, studentHistory, studentTimeline } from "@/data/students";
+import {
+  students,
+  studentHistory,
+  studentTimeline,
+  courseSlug,
+} from "@/data/students";
 import {
   generateAIAnalysis,
   generateRecommendations,
@@ -105,7 +110,13 @@ export function StudentProfile() {
                 {student.nome}
               </h2>
               <p className="text-sm text-muted-foreground">
-                {student.curso} · {student.semestre}º semestre
+                <Link
+                  to={`/cursos/${courseSlug(student.curso)}`}
+                  className="font-medium text-primary hover:underline"
+                >
+                  {student.curso}
+                </Link>{" "}
+                · {student.semestre}º semestre
               </p>
             </div>
           </div>
