@@ -128,7 +128,7 @@ export function riskDistributionOf(subset: Student[]) {
     {
       nome: "Baixo",
       valor: subset.filter((s) => s.risco === "baixo").length,
-      cor: "#15803d",
+      cor: "#16a34a",
     },
     {
       nome: "Médio",
@@ -181,16 +181,18 @@ const clamp = (n: number, min: number, max: number) =>
 export function studentHistory(student: Student): MonthlyPoint[] {
   const trend =
     student.risco === "alto" ? -1 : student.risco === "medio" ? -0.5 : 0.15;
+  // `trend` é a variação rumo ao presente: negativo = piora, positivo = melhora.
+  // O valor passado é o atual menos a evolução acumulada até agora.
   return HIST_MESES.map((mes, i) => {
-    const fromEnd = HIST_MESES.length - 1 - i; // 5..0
+    const fromEnd = HIST_MESES.length - 1 - i; // 5..0 (meses atrás)
     const wobble = ((student.id + i) % 3) - 1; // -1, 0, 1 — oscilação reprodutível
     const freq = clamp(
-      Math.round(student.frequencia + fromEnd * trend * 6 + wobble * 2),
+      Math.round(student.frequencia - fromEnd * trend * 6 + wobble * 2),
       30,
       100,
     );
     const media = clamp(
-      Number((student.media + fromEnd * trend * 0.5 + wobble * 0.15).toFixed(1)),
+      Number((student.media - fromEnd * trend * 0.5 + wobble * 0.15).toFixed(1)),
       2,
       10,
     );
@@ -272,3 +274,58 @@ export function studentTimeline(student: Student): TimelineEvent[] {
 
   return eventos;
 }
+
+/* ----------------------- Agregados da Página Inicial ----------------------- */
+
+export interface StudentTrend {
+  student: Student;
+  /** Variação de frequência do primeiro ao último mês do histórico. */
+  delta: number;
+}
+
+/**
+ * Destaques da IA: alunos cuja frequência mais caiu no período (maior risco
+ * emergente). Ordenados pela maior queda.
+ */
+export function aiHighlights(limit = 4): StudentTrend[] {
+  return students
+    .map((student) => {
+      const hist = studentHistory(student);
+      const delta = hist[hist.length - 1].frequencia - hist[0].frequencia;
+      return { student, delta };
+    })
+    .filter((t) => t.delta < 0)
+    .sort((a, b) => a.delta - b.delta)
+    .slice(0, limit);
+}
+
+export interface RecentActivity extends TimelineEvent {
+  studentId: number;
+  studentName: string;
+}
+
+const eventOrder = ["02 Fev", "18 Mar", "05 Abr", "22 Abr", "28 Abr", "12 Mai", "15 Mai"];
+
+/**
+ * Atividade recente agregada de todos os alunos (faltas, alertas, intervenções),
+ * ordenada do evento mais recente para o mais antigo.
+ */
+export function recentActivity(limit = 6): RecentActivity[] {
+  const all: RecentActivity[] = [];
+  for (const s of students) {
+    for (const ev of studentTimeline(s)) {
+      if (ev.tipo === "registro") continue; // foca em ações de acompanhamento
+      all.push({ ...ev, studentId: s.id, studentName: s.nome });
+    }
+  }
+  all.sort((a, b) => eventOrder.indexOf(b.data) - eventOrder.indexOf(a.data));
+  return all.slice(0, limit);
+}
+
+/** Resumo do dia para a saudação da home. */
+export const todaySummary = {
+  total: totalStudents,
+  alto: highRiskCount,
+  medio: mediumRiskCount,
+  evasao: estimatedDropoutRate,
+};

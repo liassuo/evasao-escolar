@@ -73,9 +73,9 @@ export function StudentProfile() {
     student.participacao === "Alta" ? 85 : student.participacao === "Média" ? 55 : 28;
 
   const performanceData = [
-    { nome: "Frequência", valor: student.frequencia, cor: "#0e7490" },
-    { nome: "Média (x10)", valor: Math.round(student.media * 10), cor: "#155e75" },
-    { nome: "Participação", valor: participacaoScore, cor: "#67b8c9" },
+    { nome: "Frequência", valor: student.frequencia, cor: "#1d4ed8" },
+    { nome: "Média (x10)", valor: Math.round(student.media * 10), cor: "#16308f" },
+    { nome: "Participação", valor: participacaoScore, cor: "#93b4f5" },
   ];
 
   return (
@@ -334,7 +334,7 @@ export function StudentProfile() {
                     type="monotone"
                     dataKey="frequencia"
                     name="Frequência (%)"
-                    stroke="#0e7490"
+                    stroke="#1d4ed8"
                     strokeWidth={2.5}
                     dot={{ r: 3 }}
                     activeDot={{ r: 5 }}
@@ -344,7 +344,7 @@ export function StudentProfile() {
                     type="monotone"
                     dataKey="media"
                     name="Média (0–10)"
-                    stroke="#155e75"
+                    stroke="#16308f"
                     strokeWidth={2.5}
                     strokeDasharray="5 4"
                     dot={{ r: 3 }}

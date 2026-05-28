@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
+import { Home } from "@/pages/Home";
 import { Dashboard } from "@/pages/Dashboard";
 import { Students } from "@/pages/Students";
 import { StudentProfile } from "@/pages/StudentProfile";
@@ -10,7 +11,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<Home />} />
+          <Route path="dashboard" element={<Dashboard />} />
           <Route path="alunos" element={<Students />} />
           <Route path="alunos/:id" element={<StudentProfile />} />
           <Route path="relatorios" element={<Reports />} />

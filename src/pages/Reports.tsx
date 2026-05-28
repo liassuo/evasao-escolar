@@ -54,11 +54,18 @@ export function Reports() {
 
   return (
     <div className="space-y-6">
+      <div>
+        <h1 className="page-title">Relatórios</h1>
+        <p className="page-subtitle">
+          Indicadores consolidados de evasão e desempenho da instituição
+        </p>
+      </div>
+
       <Card>
         <CardHeader>
-          <CardTitle>Relatórios e Indicadores</CardTitle>
+          <CardTitle>Filtros</CardTitle>
           <CardDescription>
-            Visão consolidada dos indicadores de evasão da instituição
+            Recorte os indicadores por curso, semestre e período
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -212,7 +219,7 @@ export function Reports() {
                       <Bar
                         dataKey="frequencia"
                         name="Frequência (%)"
-                        fill="#0e7490"
+                        fill="#1d4ed8"
                         radius={[4, 4, 0, 0]}
                         maxBarSize={48}
                       />
@@ -241,8 +248,8 @@ export function Reports() {
                   >
                     <defs>
                       <linearGradient id="dropoutFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#0e7490" stopOpacity={0.25} />
-                        <stop offset="100%" stopColor="#0e7490" stopOpacity={0} />
+                        <stop offset="0%" stopColor="#1d4ed8" stopOpacity={0.25} />
+                        <stop offset="100%" stopColor="#1d4ed8" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#eef2f7" />
@@ -258,7 +265,7 @@ export function Reports() {
                             textAnchor="middle"
                             fontSize={12}
                             fontWeight={sel ? 700 : 400}
-                            fill={sel ? "#0e7490" : "#64748b"}
+                            fill={sel ? "#1d4ed8" : "#64748b"}
                           >
                             {payload.value}
                           </text>
@@ -284,7 +291,7 @@ export function Reports() {
                     <Area
                       type="monotone"
                       dataKey="taxa"
-                      stroke="#0e7490"
+                      stroke="#1d4ed8"
                       strokeWidth={2.5}
                       fill="url(#dropoutFill)"
                     />

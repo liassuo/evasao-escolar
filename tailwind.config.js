@@ -10,35 +10,42 @@ export default {
     },
     extend: {
       colors: {
-        border: "hsl(205 25% 91%)",
-        input: "hsl(205 25% 89%)",
-        ring: "hsl(192 82% 34%)",
+        // Neutros (escala fria, consistente)
+        border: "hsl(214 28% 90%)",
+        input: "hsl(214 28% 88%)",
+        ring: "hsl(224 64% 33%)",
         background: "hsl(0 0% 100%)",
-        foreground: "hsl(202 30% 16%)",
+        foreground: "hsl(222 38% 18%)",
+        // Hierarquia de texto
+        ink: {
+          DEFAULT: "hsl(222 47% 16%)", // títulos / texto forte
+          soft: "hsl(220 18% 38%)", // texto secundário
+        },
+        // Azul institucional da marca (logo PersistAI)
         primary: {
-          DEFAULT: "#0e7490",
-          dark: "#155e75",
-          light: "#e0f2f7",
+          DEFAULT: "#1d4ed8",
+          dark: "#16308f",
+          light: "#e8eefc",
           foreground: "#ffffff",
         },
         accent: {
-          DEFAULT: "#155e75",
+          DEFAULT: "#2f6df6",
           foreground: "#ffffff",
         },
         muted: {
-          DEFAULT: "hsl(200 40% 97%)",
-          foreground: "hsl(200 12% 46%)",
+          DEFAULT: "hsl(214 40% 97%)",
+          foreground: "hsl(220 14% 46%)",
         },
         card: {
           DEFAULT: "#ffffff",
-          foreground: "hsl(202 33% 14%)",
+          foreground: "hsl(222 38% 18%)",
         },
         risk: {
           high: "#dc2626",
           "high-bg": "#fef2f2",
           medium: "#d97706",
           "medium-bg": "#fffbeb",
-          low: "#15803d",
+          low: "#16a34a",
           "low-bg": "#f0fdf4",
         },
       },

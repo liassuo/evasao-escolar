@@ -44,6 +44,13 @@ export function Students() {
 
   return (
     <div className="space-y-6">
+      <div>
+        <h1 className="page-title">Alunos</h1>
+        <p className="page-subtitle">
+          Acompanhamento individual e classificação de risco de evasão
+        </p>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>Lista de Alunos</CardTitle>
