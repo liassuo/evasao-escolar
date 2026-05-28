@@ -70,7 +70,7 @@ export function Students() {
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Ex.: João Silva"
+                  placeholder="Ex.: Thiago Henrique"
                   className="h-11 w-full rounded-lg border border-input bg-card pl-9 pr-3 text-sm transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-ring/25"
                 />
               </div>

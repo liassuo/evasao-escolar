@@ -25,17 +25,17 @@ export const SEMESTERS = [1, 2, 3, 4, 5, 6, 7, 8];
 type StudentRaw = Omit<Student, "risco">;
 
 const studentsRaw: StudentRaw[] = [
-  { id: 1, nome: "João Silva", curso: "Engenharia de Software", frequencia: 68, media: 6.1, participacao: "Baixa", semestre: 4 },
+  { id: 1, nome: "Thiago Henrique", curso: "Engenharia de Software", frequencia: 68, media: 6.1, participacao: "Baixa", semestre: 4 },
   { id: 2, nome: "Maria Oliveira", curso: "Administração", frequencia: 92, media: 8.7, participacao: "Alta", semestre: 3 },
   { id: 3, nome: "Pedro Santos", curso: "Direito", frequencia: 54, media: 4.8, participacao: "Baixa", semestre: 5 },
   { id: 4, nome: "Ana Costa", curso: "Psicologia", frequencia: 88, media: 7.9, participacao: "Alta", semestre: 2 },
-  { id: 5, nome: "Lucas Pereira", curso: "Sistemas de Informação", frequencia: 47, media: 4.2, participacao: "Baixa", semestre: 6 },
+  { id: 5, nome: "Guilherme Gabriel", curso: "Sistemas de Informação", frequencia: 47, media: 4.2, participacao: "Baixa", semestre: 6 },
   { id: 6, nome: "Beatriz Lima", curso: "Engenharia de Software", frequencia: 76, media: 6.8, participacao: "Média", semestre: 3 },
   { id: 7, nome: "Gabriel Souza", curso: "Administração", frequencia: 95, media: 9.1, participacao: "Alta", semestre: 4 },
   { id: 8, nome: "Larissa Fernandes", curso: "Direito", frequencia: 61, media: 5.6, participacao: "Média", semestre: 7 },
   { id: 9, nome: "Rafael Almeida", curso: "Psicologia", frequencia: 43, media: 3.9, participacao: "Baixa", semestre: 5 },
   { id: 10, nome: "Juliana Ribeiro", curso: "Sistemas de Informação", frequencia: 84, media: 7.4, participacao: "Alta", semestre: 2 },
-  { id: 11, nome: "Matheus Carvalho", curso: "Engenharia de Software", frequencia: 58, media: 5.1, participacao: "Baixa", semestre: 6 },
+  { id: 11, nome: "Davi Valério", curso: "Engenharia de Software", frequencia: 58, media: 5.1, participacao: "Baixa", semestre: 6 },
   { id: 12, nome: "Camila Rodrigues", curso: "Administração", frequencia: 79, media: 7.0, participacao: "Média", semestre: 3 },
   { id: 13, nome: "Felipe Martins", curso: "Direito", frequencia: 91, media: 8.3, participacao: "Alta", semestre: 4 },
   { id: 14, nome: "Isabela Gomes", curso: "Psicologia", frequencia: 66, media: 6.0, participacao: "Média", semestre: 5 },
