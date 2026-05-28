@@ -60,3 +60,36 @@
     background-image: linear-gradient(90deg, #1d4ed8 0%, #16308f 100%);
   }
 }
+
+/* ----------------------- Impressão (Exportar PDF) ----------------------- */
+@media print {
+  /* Oculta navegação, busca, relógio e barra inferior */
+  header,
+  nav,
+  .print\:hidden {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+  /* Tira sombras e fundos para um PDF limpo */
+  .card-shadow,
+  .card-shadow-lg {
+    box-shadow: none !important;
+  }
+  /* Evita cortar cards no meio das páginas */
+  .card-shadow,
+  table {
+    break-inside: avoid;
+  }
+  /* Cabeçalho de impressão visível só no PDF */
+  .print-header {
+    display: block !important;
+  }
+}
+.print-header {
+  display: none;
+}

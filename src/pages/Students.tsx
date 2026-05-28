@@ -4,6 +4,7 @@ import { Search, ChevronRight, Upload, ChevronDown } from "lucide-react";
 import { RiskBadge } from "@/components/RiskBadge";
 import { RiskScore } from "@/components/RiskScore";
 import { ImportPanel } from "@/components/ImportPanel";
+import { ExportButtons } from "@/components/ExportButtons";
 import { assessRisk } from "@/lib/ai";
 import {
   Card,
@@ -53,20 +54,31 @@ export function Students() {
             Acompanhamento individual e classificação de risco de evasão
           </p>
         </div>
-        <button
-          onClick={() => setImportOpen((v) => !v)}
-          className="inline-flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:border-primary/50 hover:bg-muted"
-          aria-expanded={importOpen}
-        >
-          <Upload className="h-4 w-4 text-primary" />
-          Importar dados
-          <ChevronDown
-            className={
-              "h-4 w-4 text-muted-foreground transition-transform " +
-              (importOpen ? "rotate-180" : "")
-            }
+        <div className="flex flex-wrap items-center gap-2">
+          <ExportButtons
+            filename="alunos-persistai"
+            pdf={false}
+            headers={["Nome", "Curso", "Semestre", "Frequência (%)", "Média", "Score IA", "Risco"]}
+            rows={filtered.map((s) => {
+              const a = assessRisk(s);
+              return [s.nome, s.curso, `${s.semestre}º`, s.frequencia, s.media.toFixed(1), a.score, s.risco];
+            })}
           />
-        </button>
+          <button
+            onClick={() => setImportOpen((v) => !v)}
+            className="inline-flex items-center gap-2 rounded-lg border border-input bg-card px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:border-primary/50 hover:bg-muted"
+            aria-expanded={importOpen}
+          >
+            <Upload className="h-4 w-4 text-primary" />
+            Importar dados
+            <ChevronDown
+              className={
+                "h-4 w-4 text-muted-foreground transition-transform " +
+                (importOpen ? "rotate-180" : "")
+              }
+            />
+          </button>
+        </div>
       </div>
 
       {importOpen && (

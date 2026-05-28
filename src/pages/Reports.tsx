@@ -24,6 +24,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
+import { ExportButtons } from "@/components/ExportButtons";
 import {
   COURSES,
   SEMESTERS,
@@ -34,6 +35,7 @@ import {
   summaryOf,
   type ReportFilters,
 } from "@/data/students";
+import { assessRisk } from "@/lib/ai";
 import type { Course } from "@/types";
 
 const PERIODOS = ["2026.1", "2025.2", "2025.1"];
@@ -52,12 +54,39 @@ export function Reports() {
   const filtrosAtivos =
     curso !== "todos" || semestre !== "todos" || periodo !== "2026.1";
 
+  const csvHeaders = ["Nome", "Curso", "Semestre", "Frequência (%)", "Média", "Score IA", "Risco"];
+  const csvRows = subset.map((s) => {
+    const a = assessRisk(s);
+    return [s.nome, s.curso, `${s.semestre}º`, s.frequencia, s.media.toFixed(1), a.score, s.risco];
+  });
+  const escopo =
+    curso === "todos" ? "todos-os-cursos" : curso.toLowerCase().replace(/\s+/g, "-");
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="page-title">Relatórios</h1>
-        <p className="page-subtitle">
-          Indicadores consolidados de evasão e desempenho da instituição
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="page-title">Relatórios</h1>
+          <p className="page-subtitle">
+            Indicadores consolidados de evasão e desempenho da instituição
+          </p>
+        </div>
+        <ExportButtons
+          filename={`relatorio-persistai-${escopo}-${periodo}`}
+          headers={csvHeaders}
+          rows={csvRows}
+        />
+      </div>
+
+      {/* Cabeçalho visível apenas no PDF impresso */}
+      <div className="print-header mb-2 border-b border-border pb-3">
+        <p className="font-display text-lg font-semibold text-ink">
+          PersistAI — Relatório de Indicadores
+        </p>
+        <p className="text-sm text-ink-soft">
+          Período {periodo} ·{" "}
+          {curso === "todos" ? "Todos os cursos" : curso} ·{" "}
+          {resumo.total} alunos
         </p>
       </div>
 

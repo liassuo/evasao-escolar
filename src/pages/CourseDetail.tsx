@@ -25,6 +25,7 @@ import {
 import { StatCard } from "@/components/StatCard";
 import { RiskBadge } from "@/components/RiskBadge";
 import { RiskScore } from "@/components/RiskScore";
+import { ExportButtons } from "@/components/ExportButtons";
 import {
   Card,
   CardContent,
@@ -99,11 +100,31 @@ export function CourseDetail() {
         Voltar
       </button>
 
-      <div>
-        <p className="eyebrow">Turma</p>
-        <h1 className="page-title mt-1">{curso}</h1>
-        <p className="page-subtitle">
-          Panorama de acompanhamento e risco de evasão da turma
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="eyebrow">Turma</p>
+          <h1 className="page-title mt-1">{curso}</h1>
+          <p className="page-subtitle">
+            Panorama de acompanhamento e risco de evasão da turma
+          </p>
+        </div>
+        <ExportButtons
+          filename={`turma-${slug}`}
+          headers={["Nome", "Semestre", "Frequência (%)", "Média", "Score IA", "Risco"]}
+          rows={ordenados.map((s) => {
+            const a = assessRisk(s);
+            return [s.nome, `${s.semestre}º`, s.frequencia, s.media.toFixed(1), a.score, s.risco];
+          })}
+        />
+      </div>
+
+      {/* Cabeçalho visível apenas no PDF impresso */}
+      <div className="print-header mb-2 border-b border-border pb-3">
+        <p className="font-display text-lg font-semibold text-ink">
+          PersistAI — Relatório da Turma
+        </p>
+        <p className="text-sm text-ink-soft">
+          {curso} · {resumo.total} alunos · {resumo.alto} em risco alto
         </p>
       </div>
 
