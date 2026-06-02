@@ -23,7 +23,7 @@ export function Layout() {
             className="flex shrink-0 items-center gap-2.5"
             aria-label="PersistAI — início"
           >
-            <img src="/icon.png" alt="" className="h-9 w-9 object-contain" />
+            <img src={`${import.meta.env.BASE_URL}icon.png`} alt="" className="h-9 w-9 object-contain" />
             <span className="font-display text-xl font-semibold tracking-tight text-ink">
               Persist<span className="text-primary">AI</span>
             </span>

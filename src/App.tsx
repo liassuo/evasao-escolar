@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { Home } from "@/pages/Home";
 import { Dashboard } from "@/pages/Dashboard";
@@ -10,7 +10,7 @@ import { Reports } from "@/pages/Reports";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route index element={<Home />} />
@@ -23,6 +23,6 @@ export default function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
